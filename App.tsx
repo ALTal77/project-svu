@@ -39,7 +39,7 @@ const AuthRoutes = () => {
 
   return (
     <Routes>
-      {/* <Route path="/login" element={<Login />} /> */}
+      <Route path="/login" element={<Login />} />
       <Route
         path="/dashboard"
         element={
