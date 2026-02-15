@@ -8,7 +8,9 @@ const getBaseUrl = () => {
     return `${envUrl.replace(/\/$/, "")}/api`;
   }
   
-  return "https://modakasha.runasp.net/api";
+  // CORS WORKAROUND: Using a public proxy because the backend does not allow cross-origin requests.
+  // WARNING: This is for demonstration purposes. In a real production app, the backend should enable CORS.
+  return "https://corsproxy.io/?https://modakasha.runasp.net/api";
 };
 
 const BASE_URL = getBaseUrl();
