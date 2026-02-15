@@ -1,11 +1,23 @@
-const ACTUAL_BACKEND_URL = "/api";
+const getBaseUrl = () => {
+  if (import.meta.env.DEV) {
+    return "/api";
+  }
+  
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl) {
+    return `${envUrl.replace(/\/$/, "")}/api`;
+  }
+  
+  return "https://modakasha.runasp.net/api";
+};
 
-const BASE_URL = ACTUAL_BACKEND_URL;
+const BASE_URL = getBaseUrl();
+console.log("Using API Base URL:", BASE_URL);
 
 const getHeaders = (skipAuth = false, isGet = false) => {
   const token = localStorage.getItem("token");
-  const headers: HeadersInit = {
-    accept: "*/*",
+  const headers: Record<string, string> = {
+    "Accept": "*/*",
   };
 
   if (!isGet) {
@@ -31,8 +43,8 @@ const handleResponse = async (response: Response) => {
     // If we are not on the login page already, redirect to login
     if (!response.url.includes("/auth/signin")) {
       localStorage.removeItem("token");
-      // Use window.location.origin to ensure it works on GitHub Pages sub-paths
-      window.location.href = window.location.origin + "/login";
+      // Use window.location.hash for HashRouter compatibility
+      window.location.hash = "#/login";
     }
     throw new Error(result.message || result.error || "Unauthorized");
   }
