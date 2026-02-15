@@ -17,6 +17,7 @@ interface TransactionData {
   amount: number;
   status: number;
   users: TransactionUser;
+  imagePath?: string;
 }
 
 export const RechargeManagement: React.FC = () => {
@@ -117,11 +118,11 @@ export const RechargeManagement: React.FC = () => {
     if (!matchesSearch) return false;
 
     // Additional client-side filtering based on selected status
-     if (filter === 'accepted') return tx.status === 2;
+    if (filter === 'accepted') return tx.status === 2;
     if (filter === 'rejected') return tx.status === 3;
-    if (filter === 'pending') return true;
+    if (filter === 'pending') return tx.status === 0 || tx.status === 1;
 
-     return true;
+    return true;
   });
 
   const getStatusDisplay = (status: number, amount: number) => {
@@ -134,7 +135,7 @@ export const RechargeManagement: React.FC = () => {
       case 0:
         return { label: 'Pending', color: 'bg-orange-500', text: 'text-orange-600' };
       case 1:
-        return { label: 'Completed', color: 'bg-green-500', text: 'text-green-600' };
+        return { label: 'Pending', color: 'bg-orange-500', text: 'text-orange-600' };
       case 2:
         return { label: 'Accepted', color: 'bg-emerald-500', text: 'text-emerald-600' };
       case 3:
@@ -202,6 +203,7 @@ export const RechargeManagement: React.FC = () => {
               <tr className="border-b border-gray-50 bg-gray-50/50">
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">User</th>
                 <th className="px-auto py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Transaction ID</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Receipt</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                 <th className="py-4 pr-14 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
@@ -229,6 +231,23 @@ export const RechargeManagement: React.FC = () => {
                       </p>
                     </td>
                    
+                    <td className="px-6 py-5">
+                      {tx.imagePath ? (
+                        <a href={api.getUri(tx.imagePath)} target="_blank" rel="noopener noreferrer">
+                          <img 
+                            src={api.getUri(tx.imagePath)} 
+                            alt="Receipt" 
+                            className="h-10 w-10 object-cover rounded hover:scale-150 transition-transform cursor-pointer border border-gray-200"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/40?text=Error';
+                            }}
+                          />
+                        </a>
+                      ) : (
+                        <span className="text-xs text-gray-400 italic">No receipt</span>
+                      )}
+                    </td>
+
                     <td className={`px-6 py-5 font-bold ${tx.amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {tx.amount.toLocaleString()} SYP
                     </td>
@@ -301,6 +320,24 @@ export const RechargeManagement: React.FC = () => {
             </div>
             
             <div className="p-8 space-y-6">
+              {selectedTx.imagePath && (
+                <div className="rounded-2xl overflow-hidden border border-gray-100">
+                  <a href={api.getUri(selectedTx.imagePath)} target="_blank" rel="noopener noreferrer" className="block relative group">
+                    <img 
+                      src={api.getUri(selectedTx.imagePath)} 
+                      alt="Receipt Preview" 
+                      className="w-full h-48 object-contain bg-gray-50 hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                      <span className="opacity-0 group-hover:opacity-100 bg-white/90 px-3 py-1 rounded-full text-xs font-bold shadow-sm transition-opacity">View Full Size</span>
+                    </div>
+                  </a>
+                  <div className="bg-gray-50 p-2 text-center text-xs text-gray-500 font-medium border-t border-gray-100">
+                    Transaction Receipt
+                  </div>
+                </div>
+              )}
+
               <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                 <div className="flex justify-between mb-2">
                   <span className="text-sm text-gray-500 font-medium">User</span>

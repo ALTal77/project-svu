@@ -148,7 +148,7 @@ export const PostManagement: React.FC = () => {
                   <tr key={post.id} className="hover:bg-gray-50 transition-colors group">
                     <td className="px-6 py-5">  
                       <img 
-                        src={post.mediaUrls && post.mediaUrls.length > 0 ? post.mediaUrls[0] : 'https://via.placeholder.com/100x100?text=No+Image'} 
+                        src={post.mediaUrls && post.mediaUrls.length > 0 ? api.getUri(post.mediaUrls[0]) : 'https://via.placeholder.com/100x100?text=No+Image'} 
                         className="w-16 h-16 object-cover rounded-lg shadow-sm" 
                         alt="" 
                         onError={(e) => {

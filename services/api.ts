@@ -12,7 +12,7 @@ const getBaseUrl = () => {
 };
 
 const BASE_URL = getBaseUrl();
-console.log("Using API Base URL:", BASE_URL);
+// console.log("Using API Base URL:", BASE_URL);
 
 const getHeaders = (skipAuth = false, isGet = false) => {
   const token = localStorage.getItem("token");
@@ -77,7 +77,7 @@ export const api = {
       });
       return await handleResponse(response);
     } catch (error) {
-      console.error("API Error:", error);
+      // console.error("API Error:", error);
       throw error;
     }
   },
@@ -93,7 +93,7 @@ export const api = {
       });
       return await handleResponse(response);
     } catch (error) {
-      console.error("API Error:", error);
+      // console.error("API Error:", error);
       throw error;
     }
   },
@@ -108,7 +108,7 @@ export const api = {
       });
       return await handleResponse(response);
     } catch (error) {
-      console.error("API Error:", error);
+      // console.error("API Error:", error);
       throw error;
     }
   },
@@ -122,8 +122,24 @@ export const api = {
       });
       return await handleResponse(response);
     } catch (error) {
-      console.error("API Error:", error);
+      // console.error("API Error:", error);
       throw error;
     }
+  },
+
+  getUri(path: string) {
+    if (!path) return "";
+    if (path.startsWith("http")) return path;
+    
+    // In development, use relative path (proxy handles it)
+    if (import.meta.env.DEV) {
+        return path.startsWith("/") ? path : `/${path}`;
+    }
+    
+    // In production, use the root URL (without /api)
+    const envUrl = import.meta.env.VITE_API_URL;
+    const base = envUrl ? envUrl.replace(/\/$/, "") : "https://modakasha.runasp.net";
+    
+    return `${base}${path.startsWith("/") ? path : `/${path}`}`;
   },
 };
